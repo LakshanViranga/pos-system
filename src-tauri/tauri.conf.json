@@ -23,6 +23,11 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["msi"]
+    "targets": ["msi"],
+    "icon": [
+      "icon/icon.ico",
+      "icon/icon.png",
+      "icon/icon.icns"
+    ]
   }
 }
