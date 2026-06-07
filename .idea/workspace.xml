@@ -4,9 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3f416330-763f-4d7e-aef0-7225f365ddf6" name="Changes" comment="initial commit">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="3f416330-763f-4d7e-aef0-7225f365ddf6" name="Changes" comment="tauri config file changed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-tauri/icons/128x128.png" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/icon/128x128.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-tauri/icons/128x128@2x.png" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/icon/128x128@2x.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-tauri/icons/256x256.png" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/icon/256x256.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-tauri/icons/256x256@2x.png" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/icon/256x256@2x.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-tauri/icons/32x32.png" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/icon/32x32.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-tauri/icons/icon.icns" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/icon/icon.icns" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-tauri/icons/icon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/icon/icon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-tauri/icons/icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/icon/icon.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +78,7 @@
       <option name="presentableId" value="Default" />
       <updated>1780732242242</updated>
       <workItem from="1780732243420" duration="9401000" />
-      <workItem from="1780814864005" duration="668000" />
+      <workItem from="1780814864005" duration="2013000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -81,7 +88,23 @@
       <option name="project" value="LOCAL" />
       <updated>1780814953552</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="workflow added">
+      <option name="closed" value="true" />
+      <created>1780815549611</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1780815549611</updated>
+    </task>
+    <task id="LOCAL-00003" summary="tauri config file changed">
+      <option name="closed" value="true" />
+      <created>1780816514046</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1780816514046</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -89,6 +112,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
+    <MESSAGE value="workflow added" />
+    <MESSAGE value="tauri config file changed" />
+    <option name="LAST_COMMIT_MESSAGE" value="tauri config file changed" />
   </component>
 </project>
