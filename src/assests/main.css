@@ -1,0 +1,177 @@
+/* Global CSS Variables for Restaurant POS */
+
+:root {
+    /* === BACKGROUND COLORS === */
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f8f9fa;
+    --color-background-tertiary: #c2d3f4;
+    --color-background-info: #dbeafe;
+    --color-background-danger: #fee2e2;
+    --color-background-success: #dcfce7;
+    --color-background-warning: #fef3c7;
+
+    /* === TEXT COLORS === */
+    --color-text-primary: #1f2937;
+    --color-text-secondary: #6b7280;
+    --color-text-tertiary: #9ca3af;
+    --color-text-info: #0369a1;
+    --color-text-danger: #dc2626;
+    --color-text-success: #16a34a;
+    --color-text-warning: #d97706;
+
+    /* === BORDER COLORS === */
+    --color-border-tertiary: rgba(0, 0, 0, 0.1);
+    --color-border-secondary: rgba(0, 0, 0, 0.2);
+    --color-border-primary: rgba(0, 0, 0, 0.3);
+    --color-border-info: #93c5fd;
+    --color-border-danger: #fca5a5;
+    --color-border-success: #86efac;
+    --color-border-warning: #fcd34d;
+
+    /* === SEMANTIC COLORS === */
+    --color-info: #3b82f6;
+    --color-danger: #ef4444;
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+
+    /* === TYPOGRAPHY === */
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-serif: Georgia, 'Times New Roman', serif;
+    --font-mono: 'Courier New', Courier, monospace;
+
+    /* === LAYOUT === */
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 16px;
+
+    /* === TRANSITIONS === */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* === DARK MODE === */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* === BACKGROUND COLORS === */
+        --color-background-primary: #1f2937;
+        --color-background-secondary: #111827;
+        --color-background-tertiary: #0f172a;
+        --color-background-info: #1e3a8a;
+        --color-background-danger: #7f1d1d;
+        --color-background-success: #166534;
+        --color-background-warning: #78350f;
+
+        /* === TEXT COLORS === */
+        --color-text-primary: #f3f4f6;
+        --color-text-secondary: #d1d5db;
+        --color-text-tertiary: #9ca3af;
+        --color-text-info: #60a5fa;
+        --color-text-danger: #fca5a5;
+        --color-text-success: #86efac;
+        --color-text-warning: #fcd34d;
+
+        /* === BORDER COLORS === */
+        --color-border-tertiary: rgba(255, 255, 255, 0.1);
+        --color-border-secondary: rgba(255, 255, 255, 0.2);
+        --color-border-primary: rgba(255, 255, 255, 0.3);
+        --color-border-info: #1e40af;
+        --color-border-danger: #991b1b;
+        --color-border-success: #166534;
+        --color-border-warning: #92400e;
+    }
+}
+
+/* === BASE STYLES === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    background-color: var(--color-background-primary);
+}
+
+body {
+    background-color: var(--color-background-tertiary);
+}
+
+a {
+    color: var(--color-info);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-info);
+    opacity: 0.8;
+}
+
+button {
+    font-family: var(--font-sans);
+    cursor: pointer;
+}
+
+input,
+textarea,
+select {
+    font-family: var(--font-sans);
+}
+
+/* === UTILITY CLASSES === */
+.text-center {
+    text-align: center;
+}
+
+.text-primary {
+    color: var(--color-text-primary);
+}
+
+.text-secondary {
+    color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+    color: var(--color-text-tertiary);
+}
+
+.bg-primary {
+    background-color: var(--color-background-primary);
+}
+
+.bg-secondary {
+    background-color: var(--color-background-secondary);
+}
+
+.bg-tertiary {
+    background-color: var(--color-background-tertiary);
+}
+
+.font-bold {
+    font-weight: 500;
+}
+
+.rounded-md {
+    border-radius: var(--border-radius-md);
+}
+
+.rounded-lg {
+    border-radius: var(--border-radius-lg);
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}

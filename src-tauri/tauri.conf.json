@@ -1,0 +1,28 @@
+{
+  "productName": "Restaurant POS",
+  "version": "1.0.0",
+  "identifier": "com.restaurant.pos",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Restaurant POS",
+        "width": 1400,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi"]
+  }
+}
