@@ -210,6 +210,7 @@
 
 <script>
 import HeaderComponent from '../component/Header.vue';
+import { dbService } from '../services/db.ts';
 
 export default {
   name: 'Products',
@@ -230,62 +231,7 @@ export default {
         description: '',
         active: true
       },
-      products: [
-        {
-          id: 1,
-          name: 'Chicken Biryani',
-          category: 'Biryani',
-          unitPrice: 250,
-          type: 'Non-Veg',
-          description: 'Fragrant basmati rice with tender chicken pieces',
-          active: true
-        },
-        {
-          id: 2,
-          name: 'Vegetable Biryani',
-          category: 'Biryani',
-          unitPrice: 180,
-          type: 'Veg',
-          description: 'Mixed vegetables with basmati rice',
-          active: true
-        },
-        {
-          id: 3,
-          name: 'Butter Chicken',
-          category: 'Curry',
-          unitPrice: 320,
-          type: 'Non-Veg',
-          description: 'Creamy tomato based curry with chicken',
-          active: true
-        },
-        {
-          id: 4,
-          name: 'Palak Paneer',
-          category: 'Curry',
-          unitPrice: 220,
-          type: 'Veg',
-          description: 'Spinach curry with cottage cheese',
-          active: true
-        },
-        {
-          id: 5,
-          name: 'Garlic Naan',
-          category: 'Bread',
-          unitPrice: 80,
-          type: 'Veg',
-          description: 'Soft bread topped with garlic and butter',
-          active: true
-        },
-        {
-          id: 6,
-          name: 'Tandoori Chicken',
-          category: 'Appetizers',
-          unitPrice: 280,
-          type: 'Non-Veg',
-          description: 'Grilled chicken marinated in yogurt and spices',
-          active: true
-        }
-      ]
+      products: []
     };
   },
   computed: {
@@ -303,7 +249,7 @@ export default {
     formatPrice(value) {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'LKR',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(value || 0);
@@ -334,29 +280,21 @@ export default {
         active: true
       };
     },
-    saveProduct() {
+    async saveProduct() {
       if (!this.formData.name || !this.formData.category || !this.formData.unitPrice || !this.formData.type) {
         alert('Please fill all required fields');
         return;
       }
 
-      if (this.isEditMode) {
-        // Update existing product
-        const index = this.products.findIndex(p => p.id === this.editingProductId);
-        if (index > -1) {
-          this.products[index] = {
-            ...this.products[index],
-            ...this.formData
-          };
-        }
-      } else {
-        // Add new product
-        const newProduct = {
-          id: Math.max(...this.products.map(p => p.id), 0) + 1,
-          ...this.formData
-        };
-        this.products.push(newProduct);
+      const request = {
+        name: this.formData.name,
+        dietary_type: "vegi",
+        category: this.formData.category,
+        price: this.formData.unitPrice,
+        description: this.formData.description
       }
+      console.log('before calling service');
+      await dbService.createProduct(request)
 
       this.closeModal();
     },
@@ -371,6 +309,21 @@ export default {
     handleLogout() {
       this.$emit('logout');
     }
+  },
+  async mounted() {
+    const result = await dbService.getProducts()
+    result.forEach((item) => {
+      const product = {
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        unitPrice: item.price,
+        type: item.dietary_type,
+        description: item.description,
+        active: "true",
+      }
+      this.products.push(product)
+    })
   }
 };
 </script>
@@ -502,14 +455,14 @@ export default {
 }
 
 .unit-price {
-  text-align: right;
+  text-align: left;
   font-family: monospace;
   color: var(--color-success);
   font-weight: 500;
 }
 
 .type {
-  text-align: center;
+  text-align: left;
 }
 
 .type-badge {
@@ -531,7 +484,7 @@ export default {
 }
 
 .status {
-  text-align: center;
+  text-align: left;
 }
 
 .status-badge {

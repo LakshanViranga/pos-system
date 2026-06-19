@@ -19,7 +19,7 @@
           </div>
 
           <div class="table-wrapper">
-            <table class="items-table">
+            <v-table class="items-table" density="compact" hover>
               <thead>
               <tr>
                 <th>Food</th>
@@ -32,28 +32,41 @@
               <tbody>
               <tr v-for="(item, index) in orderItems" :key="index" class="item-row">
                 <td>
-                  <input
+                  <v-select
                       v-model="item.foodName"
-                      type="text"
-                      class="input-field"
-                      placeholder="Food"
+                      :items="productItem"
+                      item-title="name"
+                      return-object
+                      class="food-select"
+                      placeholder="Select food"
+                      density="compact"
+                      variant="outlined"
+                      hide-details
+                      @update:modelValue="(value) => handleFoodSelect(index, value)"
                   />
                 </td>
                 <td>
-                  <input
+                  <v-text-field
                       v-model.number="item.count"
                       type="number"
-                      class="input-field small"
+                      class="qty-input"
                       placeholder="0"
+                      density="compact"
+                      variant="outlined"
+                      hide-details
                       @input="calculateItemTotal(index)"
                   />
                 </td>
                 <td>
-                  <input
+                  <v-text-field
                       v-model.number="item.unitPrice"
                       type="number"
-                      class="input-field small"
+                      class="price-input"
                       placeholder="0"
+                      density="compact"
+                      variant="outlined"
+                      hide-details
+                      readonly
                       @input="calculateItemTotal(index)"
                   />
                 </td>
@@ -61,20 +74,33 @@
                   {{ formatPrice(item.itemTotal) }}
                 </td>
                 <td class="action-cell">
-                  <button class="btn-remove" @click="removeItem(index)" :disabled="orderItems.length === 1">
-                    <i class="ti ti-trash"></i>
-                  </button>
+                  <v-btn
+                      icon
+                      size="small"
+                      variant="text"
+                      color="error"
+                      :disabled="orderItems.length === 1"
+                      @click="removeItem(index)"
+                  >
+                    <v-icon icon="fa fa-trash" />
+                  </v-btn>
                 </td>
               </tr>
               </tbody>
-            </table>
+            </v-table>
           </div>
 
           <!-- Add Item Button -->
-          <button class="btn-add-item" @click="addItem">
-            <i class="ti ti-plus"></i>
+          <v-btn
+              class="btn-add-item"
+              prepend-icon="fa fa-plus"
+              variant="outlined"
+              color="info"
+              size="small"
+              @click="addItem"
+          >
             Add
-          </button>
+          </v-btn>
         </div>
 
         <!-- RIGHT: Summary Section -->
@@ -83,19 +109,23 @@
 
           <!-- Subtotal -->
           <div class="summary-row">
-            <label>Subtotal</label>
+            <v-label class="summary-label">Subtotal</v-label>
             <span class="summary-value">{{ formatPrice(subtotal) }}</span>
           </div>
 
           <!-- Service Charge -->
           <div class="summary-row service-charge-row">
-            <label>Service charge</label>
+            <v-label class="summary-label">Service charge</v-label>
             <div class="charge-inputs">
-              <input
+              <v-text-field
                   v-model.number="serviceChargePercentage"
                   type="number"
                   class="charge-input"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
                   @input="calculateServiceCharge"
+                  readonly
               />
               <span class="percent">%</span>
               <span class="charge-value">{{ formatPrice(serviceCharge) }}</span>
@@ -103,19 +133,22 @@
           </div>
 
           <!-- Divider -->
-          <div class="summary-divider"></div>
+          <v-divider class="summary-divider" />
 
           <!-- Final Bill -->
           <div class="final-bill-row">
-            <label>Final bill</label>
+            <v-label class="final-label">Final bill</v-label>
             <span class="final-value">{{ formatPrice(finalBill) }}</span>
           </div>
 
           <!-- Checkout Button -->
-          <button class="btn-checkout" @click="handleCheckout">
-            <i class="ti ti-receipt"></i>
+          <v-btn
+              class="btn-checkout"
+              prepend-icon="fa fa-receipt"
+              @click="handleCheckout"
+          >
             Checkout
-          </button>
+          </v-btn>
         </div>
       </div>
     </div>
@@ -124,6 +157,8 @@
 
 <script>
 import HeaderComponent from '../component/Header.vue';
+import { useProductStore } from "../stores/product.ts";
+import { dbService } from '../services/db.ts';
 
 export default {
   name: 'MakeOrder',
@@ -133,10 +168,10 @@ export default {
   data() {
     return {
       loggedUser: 'Admin User',
-      orderId: Math.floor(Math.random() * 10000),
+      orderId: null,
       orderItems: [
         {
-          foodName: '',
+          foodName: null,
           count: 0,
           unitPrice: 0,
           itemTotal: 0
@@ -145,7 +180,8 @@ export default {
       serviceChargePercentage: 10,
       serviceCharge: 0,
       subtotal: 0,
-      finalBill: 0
+      finalBill: 0,
+      productItem: Array.from(useProductStore().products.values())
     };
   },
   computed: {
@@ -154,9 +190,23 @@ export default {
     }
   },
   methods: {
+    /**
+     * Handle food selection and auto-update unit price
+     */
+    handleFoodSelect(index, selectedProduct) {
+      const item = this.orderItems[index];
+      if (selectedProduct && selectedProduct.price) {
+        item.unitPrice = selectedProduct.price;
+        this.calculateItemTotal(index);
+      }
+    },
+
+    /**
+     * Add new item to order
+     */
     addItem() {
       this.orderItems.push({
-        foodName: '',
+        foodName: null,
         count: 0,
         unitPrice: 0,
         itemTotal: 0
@@ -176,6 +226,9 @@ export default {
       this.calculateTotals();
     },
 
+    /**
+     * Calculate subtotal and final amounts
+     */
     calculateTotals() {
       this.subtotal = this.orderItems.reduce((sum, item) => {
         return sum + (item.itemTotal || 0);
@@ -183,49 +236,69 @@ export default {
       this.calculateServiceCharge();
     },
 
+    /**
+     * Calculate service charge and final bill
+     */
     calculateServiceCharge() {
       this.serviceCharge = (this.subtotal * this.serviceChargePercentage) / 100;
       this.finalBill = this.subtotal + this.serviceCharge;
     },
 
+    /**
+     * Format price to LKR currency
+     */
     formatPrice(value) {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'LKR',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(value || 0);
     },
 
-    handleCheckout() {
+    /**
+     * Handle checkout
+     */
+    async handleCheckout() {
       if (this.subtotal === 0) {
         alert('Please add items to the order');
         return;
       }
 
-      const orderData = {
-        orderId: this.orderId,
-        items: this.orderItems.filter(item => item.foodName && item.count > 0),
+      const createOrderRequest = {
+        order_number: await dbService.getOrderId(),
+        items: [],
+        customer_id:"fresh",
         subtotal: this.subtotal,
-        serviceChargePercentage: this.serviceChargePercentage,
-        serviceCharge: this.serviceCharge,
-        finalBill: this.finalBill,
-        timestamp: new Date()
-      };
+        service_charge: this.serviceCharge,
+        discount_amount: 0,
+        payment_method: "CASH",
+        total_amount: this.finalBill,
+        notes: "no",
+        order_type: "take away"
+      }
 
-      console.log('Order Data:', orderData);
-      alert(`Order #${this.orderId} created successfully!\nTotal: ${this.formatPrice(this.finalBill)}`);
+      // call backend endpoint
+      try {
+        await dbService.createOrder(createOrderRequest)
+      } catch (error) {
+        console.log(error);
+      }
 
       // Navigate to orders page or reset form
       this.$router.push('/orders');
     },
 
+    /**
+     * Handle logout
+     */
     handleLogout() {
       this.$emit('logout');
     }
   },
   mounted() {
     this.calculateTotals();
+    console.log('memory product store', this.productItem);
   }
 };
 </script>
@@ -330,26 +403,20 @@ export default {
   background: var(--color-background-secondary);
 }
 
-.input-field {
-  width: 100%;
-  padding: 0.4rem;
-  border: 1px solid var(--color-border-tertiary);
-  border-radius: 3px;
+.food-select {
+  min-width: 120px;
+}
+
+.qty-input,
+.price-input {
+  max-width: 80px;
+}
+
+.food-select :deep(.v-field__input),
+.qty-input :deep(.v-field__input),
+.price-input :deep(.v-field__input) {
   font-size: 12px;
-  color: var(--color-text-primary);
-  background: var(--color-background-primary);
-  transition: border-color var(--transition-fast);
-}
-
-.input-field.small {
-  width: 60px;
-  text-align: center;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: var(--color-info);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  padding: 0.3rem !important;
 }
 
 .price-cell {
@@ -366,47 +433,9 @@ export default {
   width: 40px;
 }
 
-.btn-remove {
-  padding: 0.3rem 0.4rem;
-  border: 1px solid var(--color-border-danger);
-  background: transparent;
-  color: var(--color-text-danger);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-.btn-remove:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.1);
-}
-
-.btn-remove:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 .btn-add-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem;
-  border: 1px dashed var(--color-border-info);
-  background: transparent;
-  color: var(--color-info);
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all var(--transition-fast);
-}
-
-.btn-add-item:hover {
-  background: rgba(59, 130, 246, 0.05);
+  margin-top: 0.5rem;
+  text-transform: none;
 }
 
 /* === SUMMARY SECTION === */
@@ -434,9 +463,10 @@ export default {
   padding: 0.6rem 0;
 }
 
-.summary-row label {
+.summary-label {
   color: var(--color-text-secondary);
   font-weight: 400;
+  font-size: 13px;
 }
 
 .summary-value {
@@ -462,19 +492,13 @@ export default {
 }
 
 .charge-input {
-  width: 60px;
-  padding: 0.4rem;
-  border: 1px solid var(--color-border-tertiary);
-  border-radius: 3px;
-  font-size: 12px;
-  color: var(--color-text-primary);
-  text-align: center;
+  max-width: 80px;
 }
 
-.charge-input:focus {
-  outline: none;
-  border-color: var(--color-info);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+.charge-input :deep(.v-field__input) {
+  font-size: 12px;
+  padding: 0.3rem !important;
+  text-align: center;
 }
 
 .percent {
@@ -492,8 +516,6 @@ export default {
 }
 
 .summary-divider {
-  height: 1px;
-  background: var(--color-border-tertiary);
   margin: 0.4rem 0;
 }
 
@@ -505,7 +527,7 @@ export default {
   border-top: 1px solid var(--color-border-tertiary);
 }
 
-.final-bill-row label {
+.final-label {
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-primary);
@@ -513,41 +535,20 @@ export default {
 
 .final-value {
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-success);
   font-family: monospace;
 }
 
 .btn-checkout {
-  width: 100%;
-  padding: 0.8rem;
-  margin-top: 0.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  text-transform: none;
+  letter-spacing: 0;
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  background-color: var(--color-danger);
 }
 
 .btn-checkout:hover {
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-checkout:active {
-  transform: translateY(0);
-}
-
-.btn-checkout i {
-  font-size: 16px;
 }
 
 /* === RESPONSIVE === */
@@ -606,8 +607,10 @@ export default {
     padding: 0.4rem 0.3rem;
   }
 
-  .input-field.small {
-    width: 50px;
+  .food-select,
+  .qty-input,
+  .price-input {
+    max-width: 60px;
   }
 }
 

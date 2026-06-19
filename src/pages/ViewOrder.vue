@@ -180,6 +180,8 @@
 
 <script>
 import HeaderComponent from '../component/Header.vue';
+import { dbService } from '../services/db.ts';
+import { commonUtils } from "../utils/common.ts";
 
 export default {
   name: 'Orders',
@@ -254,13 +256,8 @@ export default {
     }
   },
   methods: {
-    formatPrice(value) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(value || 0);
+    formatPrice(price) {
+      return commonUtils.formatPrice(price);
     },
     formatDate(date) {
       return new Intl.DateTimeFormat('en-US', {
@@ -306,7 +303,14 @@ export default {
     },
     handleLogout() {
       this.$emit('logout');
+    },
+    async getAllOrders() {
+      return await dbService.getAllOrders();
     }
+  },
+  async mounted() {
+    const orders = await this.getAllOrders();
+    console.log('Order', orders);
   }
 };
 </script>
